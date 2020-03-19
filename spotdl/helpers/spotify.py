@@ -1,3 +1,5 @@
+import spotipy
+
 from spotdl.authorize.services import AuthorizeSpotify
 import spotdl.util
 
@@ -70,6 +72,13 @@ class SpotifyHelpers:
         if not target_file:
             target_file = u"{0}.txt".format(slugify(playlist["name"], ok="-_()[]{}"))
         return self.write_tracks(tracks, target_file)
+
+    def clear_playlist(self, playlist_url):
+        try:
+            results = self.spotify.user_playlist_replace_tracks(user=None, playlist_id=playlist_url, tracks=[])
+        except spotipy.client.SpotifyException as e:
+            logger.exception("Make sure the playlist is set to publicly visible and can be edited")
+        return results
 
     def fetch_album(self, album_uri):
         logger.debug('Fetching album "{album}".'.format(album=album_uri))

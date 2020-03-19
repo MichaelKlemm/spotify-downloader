@@ -81,6 +81,8 @@ class Spotdl:
         elif self.arguments["playlist"]:
             playlist = spotify_tools.fetch_playlist(self.arguments["playlist"])
             spotify_tools.write_playlist_tracks(playlist, self.arguments["write_to"])
+        elif self.arguments["clear_playlist"]:
+            spotify_tools.clear_playlist(self.arguments["clear_playlist"])
         elif self.arguments["album"]:
             album = spotify_tools.fetch_album(self.arguments["album"])
             spotify_tools.write_album_tracks(album, self.arguments["write_to"])
