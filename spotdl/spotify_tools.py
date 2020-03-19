@@ -13,17 +13,22 @@ from spotdl import const
 from spotdl import internals
 from spotdl.lyrics.providers import LyricClasses
 from spotdl.lyrics.exceptions import LyricsNotFound
+from pathlib import Path, PurePath
 
 spotify = None
 
 
 def generate_token():
     """ Generate the token. """
-    credentials = oauth2.SpotifyClientCredentials(
+    credentials = oauth2.SpotifyOAuth(
         client_id=const.args.spotify_client_id,
         client_secret=const.args.spotify_client_secret,
+        scope="playlist-modify-private",
+        cache_path=str(PurePath(Path.home(), ".spotipy-cache")),
+        redirect_uri="http://michael-klemm.com",
     )
     token = credentials.get_access_token()
+
     return token
 
 
@@ -36,6 +41,7 @@ def must_be_authorized(func, spotify=spotify):
         except (AssertionError, spotipy.client.SpotifyException):
             token = generate_token()
             spotify = spotipy.Spotify(auth=token)
+            #spotify.current_user_saved_tracks()
             return func(*args, **kwargs)
 
     return wrapper
@@ -156,6 +162,24 @@ def fetch_playlist(playlist):
 
     return results
 
+@must_be_authorized
+def clear_playlist(playlist):
+    try:
+        playlist_id = internals.extract_spotify_id(playlist)
+    except IndexError:
+        # Wrong format, in either case
+        log.error("The provided playlist URL is not in a recognized format!")
+        sys.exit(10)
+    try:
+        results = spotify.user_playlist_replace_tracks(user=None, playlist_id=playlist_id, tracks=[])
+    except spotipy.client.SpotifyException as e:
+        log.info(repr(e))
+        log.error("Unable to clear/modify playlist")
+        log.info("Make sure the playlist is set to publicly visible and can be edited")
+        sys.exit(11)
+
+    return results
+
 
 @must_be_authorized
 def write_playlist(playlist_url, text_file=None):
@@ -164,7 +188,6 @@ def write_playlist(playlist_url, text_file=None):
     if not text_file:
         text_file = u"{0}.txt".format(slugify(playlist["name"], ok="-_()[]{}"))
     return write_tracks(tracks, text_file)
-
 
 @must_be_authorized
 def fetch_album(album):

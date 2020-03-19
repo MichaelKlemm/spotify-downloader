@@ -6,7 +6,6 @@ import pprint
 import logzero
 from logzero import logger as log
 
-from spotdl import __version__
 from spotdl import const
 from spotdl import handle
 from spotdl import internals
@@ -38,6 +37,8 @@ def match_args():
                 write_successful_file=const.args.write_successful,
             )
             list_dl.download_list()
+    elif const.args.clear_playlist:
+        spotify_tools.clear_playlist(const.args.clear_playlist)
     elif const.args.playlist:
         spotify_tools.write_playlist(
             playlist_url=const.args.playlist, text_file=const.args.write_to
@@ -54,6 +55,7 @@ def match_args():
         spotify_tools.write_user_playlist(
             username=const.args.username, text_file=const.args.write_to
         )
+
 
 
 def main():

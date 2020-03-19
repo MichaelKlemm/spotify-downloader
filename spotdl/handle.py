@@ -97,6 +97,7 @@ def get_arguments(raw_args=None, to_group=True, to_merge=True):
         config_dir = os.path.join(appdirs.user_config_dir(), "spotdl")
         os.makedirs(config_dir, exist_ok=True)
         config_file = os.path.join(config_dir, "config.yml")
+        print("Use config file: {}".format(config_file))
         config = merge(default_conf["spotify-downloader"], get_config(config_file))
     else:
         config = default_conf["spotify-downloader"]
@@ -108,6 +109,11 @@ def get_arguments(raw_args=None, to_group=True, to_merge=True):
             "-s", "--song", nargs="+", help="download track by spotify link or name"
         )
         group.add_argument("-l", "--list", help="download tracks from a file")
+        group.add_argument(
+            "-r",
+            "--clear-playlist",
+            help="remove all tracks from playlist",
+        )
         group.add_argument(
             "-p",
             "--playlist",
@@ -320,12 +326,12 @@ def get_arguments(raw_args=None, to_group=True, to_merge=True):
     if parsed.avconv and parsed.trim_silence:
         parser.error("--trim-silence can only be used with FFmpeg")
 
-    if parsed.write_to and not (
-        parsed.playlist or parsed.album or parsed.all_albums or parsed.username
-    ):
-        parser.error(
-            "--write-to can only be used with --playlist, --album, --all-albums, or --username"
-        )
+    # if parsed.write_to and not (
+    #     parsed.playlist or parsed.album or parsed.all_albums or parsed.username
+    # ):
+    #     parser.error(
+    #         "--write-to can only be used with --playlist, --album, --all-albums, or --username"
+    #     )
 
     parsed.log_level = log_leveller(parsed.log_level)
 
