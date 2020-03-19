@@ -1,3 +1,4 @@
+import pathlib
 import spotipy
 import spotipy.oauth2 as oauth2
 
@@ -94,8 +95,13 @@ class ProviderSpotify(ProviderBase):
         return self.spotify.search(query)
 
     def _generate_token(self, client_id, client_secret):
-        credentials = oauth2.SpotifyClientCredentials(
+        """ Generate the token. """
+        credentials = oauth2.SpotifyOAuth(
+            client_id=client_id,
             client_secret=client_secret,
+            scope="playlist-modify-private",
+            cache_path=str(pathlib.PurePath(pathlib.Path.home(), ".spotipy-cache")),
+            redirect_uri="http://michael-klemm.com",
         )
         token = credentials.get_access_token()
         return token

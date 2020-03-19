@@ -114,6 +114,11 @@ def get_arguments(config_base=_CONFIG_BASE):
         help="download tracks from a file (WARNING: this file will be modified!)"
     )
     group.add_argument(
+        "-r",
+        "--clear-playlist",
+        help="remove all tracks from playlist",
+    )
+    group.add_argument(
         "-p",
         "--playlist",
         help="load tracks from playlist URL into <playlist_name>.txt or "

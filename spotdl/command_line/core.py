@@ -167,6 +167,8 @@ class Spotdl:
                 return spotdl.command_line.exitcodes.URI_NOT_FOUND_ERROR
             else:
                 spotify_tools.write_playlist_tracks(playlist, self.arguments["write_to"])
+        elif self.arguments["clear_playlist"]:
+            spotify_tools.clear_playlist(self.arguments["clear_playlist"])
         elif self.arguments["album"]:
             try:
                 album = spotify_tools.fetch_album(self.arguments["album"])

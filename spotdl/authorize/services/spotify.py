@@ -1,3 +1,5 @@
+import os
+
 from spotdl.authorize import AuthorizeBase
 from spotdl.authorize.exceptions import SpotifyAuthorizationError
 
@@ -69,9 +71,12 @@ class AuthorizeSpotify(spotipy.Spotify):
             self.__dict__.update(masterclient.__dict__)
         else:
             logger.debug("Setting master Spotify credentials.")
-            credential_manager = oauth2.SpotifyClientCredentials(
+            credential_manager = oauth2.SpotifyOAuth(
                 client_id=client_id,
-                client_secret=client_secret
+                client_secret=client_secret,
+                scope="playlist-modify-private",
+                cache_path=os.path.expanduser("~/.spotipy-cache"),
+                redirect_uri="http://michael-klemm.com",
             )
             super().__init__(client_credentials_manager=credential_manager)
             # Cache current client
