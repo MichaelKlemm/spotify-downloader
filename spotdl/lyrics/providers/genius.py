@@ -87,7 +87,7 @@ class Genius(LyricBase):
         request = urllib.request.Request(url)
         request.add_header("User-Agent", "urllib")
         response = urllib.request.urlopen(request, timeout=timeout)
-        metadata = json.loads(response.read())
+        metadata = json.loads(response.read().decode('utf-8'))
         if len(metadata["response"]["sections"][0]["hits"]) == 0:
             raise LyricsNotFoundError(
                 "Genius returned no lyric results for the search URL: {}".format(url)
